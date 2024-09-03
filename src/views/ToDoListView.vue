@@ -75,6 +75,7 @@ const todoSet = async (parameters: string, key: any) => {
   loading.value = true
   try {
     if (parameters === 'add') {
+      if (!key) return (loading.value = false)
       const { data } = await todoAdd(key)
       showMessage('success', '新增完成', `${data.newTodo.content}`)
       inputText.value = ''
