@@ -63,13 +63,14 @@ const changeActive = async (index: number) => {
   const { data } = await getTodoList()
   todoList.value = await data.data.filter((item: TodoListProps) => {
     if (!index) return item
-    if (index === 1) return item.status
-    if (index === 2) return !item.status
+    if (index === 1) return !item.status
+    if (index === 2) return item.status
   })
   loading.value = false
 }
 
-const finishList = computed(() => todoList.value.filter((item) => item.status))
+const finishList = computed(() => todoList.value.filter((item) => !item.status))
+const waitList = computed(() => todoList.value.filter((item) => item.status))
 
 const todoSet = async (parameters: string, key: any) => {
   loading.value = true
@@ -97,8 +98,8 @@ const todoSet = async (parameters: string, key: any) => {
     const { data } = await getTodoList()
     todoList.value = await data.data.filter((item: TodoListProps) => {
       if (!active.value) return item
-      if (active.value === 1) return item.status
-      if (active.value === 2) return !item.status
+      if (active.value === 1) return !item.status
+      if (active.value === 2) return item.status
     })
     loading.value = false
   } catch (error) {
@@ -229,7 +230,9 @@ onMounted(async () => {
               </li>
             </ul>
             <div class="todoList_statistics">
-              <p v-if="!active">{{ finishList.length }} 個已完成項目</p>
+              <p v-if="!active">{{ finishList.length }}&emsp;個待完成項目</p>
+              <p v-if="active === 1">{{ finishList.length }}&emsp;個待完成項目</p>
+              <p v-if="active === 2">{{ waitList.length }}&emsp;個已完成項目</p>
             </div>
           </div>
         </div>
@@ -239,6 +242,9 @@ onMounted(async () => {
 </template>
 
 <style lang="scss">
+.todoList {
+  margin-bottom: 30px;
+}
 .item {
   justify-content: space-between;
   .item-name {
